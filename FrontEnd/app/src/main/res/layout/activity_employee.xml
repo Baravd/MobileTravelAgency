@@ -19,7 +19,7 @@
             android:layout_height="300dp" />
 
         <ProgressBar
-            android:id="@+id/progressBar"
+            android:id="@+id/employeeProgressBar"
             style="?android:attr/progressBarStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />

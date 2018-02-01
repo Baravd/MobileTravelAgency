@@ -5,6 +5,7 @@ import android.content.Context;
 import com.bvd.android.agentie.MyApp;
 import com.bvd.android.agentie.model.Trip;
 import com.bvd.android.agentie.rest.TripController;
+import com.bvd.android.utils.NetworkUtils;
 
 import javax.inject.Singleton;
 
@@ -65,5 +66,11 @@ public class AppModule {
     @Singleton
     public TripController provideTripController(Retrofit retrofit) {
         return retrofit.create(TripController.class);
+    }
+
+    @Provides
+    @Singleton
+    public NetworkUtils provideNetworkUtils() {
+        return new NetworkUtils();
     }
 }

@@ -5,14 +5,11 @@ import android.os.Bundle;
 
 import com.bvd.android.agentie.R;
 
-import butterknife.ButterKnife;
-
-public class EmployeeDetailsActivity extends AppCompatActivity {
+public class AddTripActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_employee_details);
-        ButterKnife.bind(this);
+        setContentView(R.layout.activity_add_trip);
     }
 }

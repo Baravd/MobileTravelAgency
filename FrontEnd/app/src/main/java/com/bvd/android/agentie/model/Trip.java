@@ -1,10 +1,12 @@
 package com.bvd.android.agentie.model;
 
+import java.io.Serializable;
+
 /**
  * Created by bara on 2/1/2018.
  */
 
-public class Trip {
+public class Trip implements Serializable {
     private Integer id;
     private String name;
     private Integer rooms;

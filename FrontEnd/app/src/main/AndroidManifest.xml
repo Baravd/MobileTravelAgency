@@ -23,7 +23,8 @@
         <activity android:name=".client.ClientActivity" />
         <activity android:name=".employee.EmployeeActivity" />
         <activity android:name=".employee.EmployeeDetailsActivity" />
-        <activity android:name=".employee.TripDetailsActivity"></activity>
+        <activity android:name=".employee.TripDetailsActivity" />
+        <activity android:name=".employee.AddTripActivity"></activity>
     </application>
 
 </manifest>
