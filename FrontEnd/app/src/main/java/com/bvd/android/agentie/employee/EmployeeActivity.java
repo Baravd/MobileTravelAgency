@@ -164,7 +164,7 @@ public class EmployeeActivity extends AppCompatActivity {
     @OnItemClick(R.id.employeeTripList)
     public void redirectToDetails(AdapterView<?> adapterView, View view, int i) {
         Trip trip = tripAdapter.getItem(i);
-        Intent intent = new Intent(view.getContext(), EmployeeDetailsActivity.class);
+        Intent intent = new Intent(view.getContext(), TripDetailsActivity.class);
         intent.putExtra("item", trip);
         startActivity(intent);
     }

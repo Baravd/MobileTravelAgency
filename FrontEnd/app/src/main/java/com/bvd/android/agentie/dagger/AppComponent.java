@@ -2,7 +2,6 @@ package com.bvd.android.agentie.dagger;
 
 import com.bvd.android.agentie.MyApp;
 import com.bvd.android.agentie.employee.EmployeeActivity;
-import com.bvd.android.agentie.employee.EmployeeDetailsActivity;
 import com.bvd.android.agentie.employee.TripDetailsActivity;
 
 import javax.inject.Singleton;

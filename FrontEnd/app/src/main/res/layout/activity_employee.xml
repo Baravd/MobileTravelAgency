@@ -16,7 +16,7 @@
         <ListView
             android:id="@+id/employeeTripList"
             android:layout_width="match_parent"
-            android:layout_height="300dp" />
+            android:layout_height="390dp" />
 
         <ProgressBar
             android:id="@+id/employeeProgressBar"
