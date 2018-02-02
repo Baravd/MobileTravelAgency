@@ -169,4 +169,9 @@ public class EmployeeActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        refreshAdapter();
+    }
 }

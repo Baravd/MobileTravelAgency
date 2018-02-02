@@ -18,6 +18,9 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import timber.log.Timber;
 
 public class TripDetailsActivity extends AppCompatActivity {
@@ -75,10 +78,34 @@ public class TripDetailsActivity extends AppCompatActivity {
     @OnClick(R.id.detailsDeleteBtn)
     void removeItem() {
         makeEverythingInvisibleAndShowProgress();
+        Call<Void> deleteItemCall = controller.deleteItem(trip.getId());
 
-        //call
-        //if succes else put a Toast
+
+        deleteItemCall.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                int code = response.code();
+                Timber.v("Response code=%s and body=" + response.body(), code);
+                if (code == 200) {
+                    Toast.makeText(TripDetailsActivity.this, "Successful Delete", Toast.LENGTH_SHORT).show();
+                    finish();
+
+                } else {
+                    Toast.makeText(TripDetailsActivity.this, "Failed whit:" + code, Toast.LENGTH_SHORT).show();
+                    makeEverythingVisibleAndHideProgress();
+                }
+                makeEverythingVisibleAndHideProgress();
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Toast.makeText(TripDetailsActivity.this, "!!!Failed!!!", Toast.LENGTH_SHORT).show();
+                makeEverythingVisibleAndHideProgress();
+
+            }
+        });
         finish();
+
     }
 
 
@@ -86,18 +113,52 @@ public class TripDetailsActivity extends AppCompatActivity {
     void updateItem() {
         makeEverythingInvisibleAndShowProgress();
 
-        if (fieldsValid()) {
-
-        } else {
+        if (!fieldsValid()) {
             Toast.makeText(this, "Check your input", Toast.LENGTH_SHORT).show();
+            return;
         }
+        Trip trip = update();
+        Call<Trip> updateItemCall = controller.updateItem(trip);
+
+
+        updateItemCall.enqueue(new Callback<Trip>() {
+            @Override
+            public void onResponse(Call<Trip> call, Response<Trip> response) {
+                int code = response.code();
+                Timber.v("Response code=%s and body=" + response.body(), code);
+                if (code == 200) {
+                    Toast.makeText(TripDetailsActivity.this, "Successful Update", Toast.LENGTH_SHORT).show();
+                    finish();
+
+                } else {
+                    Toast.makeText(TripDetailsActivity.this, "Failed whit:" + code, Toast.LENGTH_SHORT).show();
+                    makeEverythingVisibleAndHideProgress();
+                }
+                makeEverythingVisibleAndHideProgress();
+            }
+
+            @Override
+            public void onFailure(Call<Trip> call, Throwable t) {
+                Toast.makeText(TripDetailsActivity.this, "!!!Failed!!!", Toast.LENGTH_SHORT).show();
+                makeEverythingVisibleAndHideProgress();
+
+            }
+        });
         finish();
 
 
     }
 
+    private Trip update() {
+        trip.setName(nameText.getText().toString());
+        trip.setRooms(Integer.valueOf(roomsText.getText().toString()));
+        trip.setStatus(statusText.getText().toString());
+        trip.setType(typeText.getText().toString());
+        return trip;
+    }
+
     private boolean fieldsValid() {
-        if (istEmpty(nameText) || istEmpty(statusText) || istEmpty(typeText) || istEmpty(roomsText))
+        if (isEmpty(nameText) || isEmpty(statusText) || isEmpty(typeText) || isEmpty(roomsText))
             return false;
         return Integer.parseInt(String.valueOf(roomsText.getText())) > 0;
     }
@@ -123,7 +184,9 @@ public class TripDetailsActivity extends AppCompatActivity {
         deleteBtn.setVisibility(View.VISIBLE);
     }
 
-    private boolean istEmpty(EditText etText) {
+    private boolean isEmpty(EditText etText) {
         return etText.getText().toString().trim().length() == 0;
     }
+
+
 }

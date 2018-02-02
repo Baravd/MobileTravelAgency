@@ -1,6 +1,7 @@
 package com.bvd.android.agentie.dagger;
 
 import com.bvd.android.agentie.MyApp;
+import com.bvd.android.agentie.employee.AddTripActivity;
 import com.bvd.android.agentie.employee.EmployeeActivity;
 import com.bvd.android.agentie.employee.TripDetailsActivity;
 
@@ -20,6 +21,8 @@ public interface AppComponent {
     void inject(EmployeeActivity target);
 
     void inject(TripDetailsActivity target);
+
+    void inject(AddTripActivity target);
 
 }
 
