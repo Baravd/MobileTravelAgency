@@ -3,6 +3,7 @@ package com.bvd.android.agentie.dagger;
 import com.bvd.android.agentie.MainActivity;
 import com.bvd.android.agentie.MyApp;
 import com.bvd.android.agentie.client.CustomerAllItemsActivity;
+import com.bvd.android.agentie.client.CustomerCancelReservationActivity;
 import com.bvd.android.agentie.client.CustomerMyItemsActivity;
 import com.bvd.android.agentie.client.CustomerReserveActivity;
 import com.bvd.android.agentie.employee.AddTripActivity;
@@ -35,6 +36,8 @@ public interface AppComponent {
     void inject(CustomerAllItemsActivity target);
 
     void inject(CustomerReserveActivity target);
+
+    void inject(CustomerCancelReservationActivity  target);
 
 }
 

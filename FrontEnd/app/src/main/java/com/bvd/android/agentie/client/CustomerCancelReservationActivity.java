@@ -12,11 +12,10 @@ import com.bvd.android.agentie.MyApp;
 import com.bvd.android.agentie.R;
 import com.bvd.android.agentie.dal.AppDatabase;
 import com.bvd.android.agentie.dal.ItemDao;
-import com.bvd.android.agentie.employee.TripDetailsActivity;
 import com.bvd.android.agentie.model.Item;
-import com.bvd.android.agentie.model.dtos.TripBookDto;
 import com.bvd.android.agentie.rest.TripController;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -30,43 +29,39 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import timber.log.Timber;
 
-public class CustomerReserveActivity extends AppCompatActivity {
-
-    @BindView(R.id.customerReserverRooms)
-    public EditText roomsText;
-
-    @BindView(R.id.customerReserveProgressBar)
-    public ProgressBar progressBar;
-
-    @BindView(R.id.customerReserveBtn)
-    public Button reserveBtn;
-
+public class CustomerCancelReservationActivity extends AppCompatActivity {
 
 
     @Inject
     public TripController controller;
 
+    @BindView(R.id.customerCancelReserveDeleteBtn)
+    public Button deleteBtn;
+
+    @BindView(R.id.customerCancelReserveProgressBar)
+    public ProgressBar progressBar;
+
     private Item item;
-    private List<EditText> allEditTexts;
+    private List<EditText> allEditTexts= new ArrayList<>();
     private List<Button> allButtons;
-    private List<EditText> checkEditTexts;
+    private List<EditText> checkEditTexts = new ArrayList<>();
     private AppDatabase appDatabase;
     private ItemDao dao;
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_customer_add);
+        setContentView(R.layout.activity_customer_cancel_reservation);
+
         ButterKnife.bind(this);
         ((MyApp) getApplication()).getInjector().inject(this);
         Timber.v("on create");
 
 
         item = (Item) getIntent().getExtras().getSerializable("item");
-        allEditTexts = Arrays.asList(roomsText);
-        allButtons = Arrays.asList(reserveBtn);
-        checkEditTexts = Arrays.asList(roomsText);
+        allButtons = Arrays.asList(deleteBtn);
         initDB();
 
         if (item == null) {
@@ -77,39 +72,38 @@ public class CustomerReserveActivity extends AppCompatActivity {
             makeEverythingVisibleAndHideProgress(progressBar, allEditTexts, allButtons);
 
         }
-
-
     }
 
-    @OnClick(R.id.customerReserveBtn)
-    public void reserve() {
-        if (!fieldsValid(allEditTexts, checkEditTexts)) {
-            Toast.makeText(CustomerReserveActivity.this, "Check your connection", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        int nrRooms = Integer.valueOf(roomsText.getText().toString());
+    private void initDB() {
+        appDatabase = AppDatabase.getAppDatabase(this);
+        dao = appDatabase.getDAO();
+    }
+
+    @OnClick(R.id.customerCancelReserveDeleteBtn)
+    void removeItem() {
         makeEverythingInvisibleAndShowProgress(progressBar, allEditTexts, allButtons);
-        TripBookDto tripBookDto = new TripBookDto(item.getId(), nrRooms);
-        Call<Item> tripCall = controller.acquireItem(tripBookDto);
-        tripCall.enqueue(new Callback<Item>() {
+        Call<Void> deleteItemCall = controller.deleteItem(item.getId());
+
+
+        deleteItemCall.enqueue(new Callback<Void>() {
             @Override
-            public void onResponse(Call<Item> call, Response<Item> response) {
+            public void onResponse(Call<Void> call, Response<Void> response) {
                 int code = response.code();
-                Timber.v("Response code=%s and body=%s", code, response.body());
+                Timber.v("Response code=%s and body=" + response.body(), code);
                 if (code == 200) {
-                    Toast.makeText(CustomerReserveActivity.this, "Successful Reservation", Toast.LENGTH_SHORT).show();
-                    saveToDb(response.body());
+                    Toast.makeText(CustomerCancelReservationActivity.this, "Successful Delete", Toast.LENGTH_SHORT).show();
+                    removeFromDb(item);
                     finish();
 
                 } else {
-                    Toast.makeText(CustomerReserveActivity.this, "Failed whit:" + code, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CustomerCancelReservationActivity.this, "Failed whit:" + code, Toast.LENGTH_SHORT).show();
                 }
                 makeEverythingVisibleAndHideProgress(progressBar, allEditTexts, allButtons);
             }
 
             @Override
-            public void onFailure(Call<Item> call, Throwable t) {
-                Toast.makeText(CustomerReserveActivity.this, "!!!Failed!!!", Toast.LENGTH_SHORT).show();
+            public void onFailure(Call<Void> call, Throwable t) {
+                Toast.makeText(CustomerCancelReservationActivity.this, "!!!Failed!!!", Toast.LENGTH_SHORT).show();
                 makeEverythingVisibleAndHideProgress(progressBar, allEditTexts, allButtons);
 
             }
@@ -118,15 +112,8 @@ public class CustomerReserveActivity extends AppCompatActivity {
 
     }
 
-
-
-
-    private void saveToDb(Item body) {
-        dao.insertAll(body);
-    }
-    private void initDB() {
-        appDatabase = AppDatabase.getAppDatabase(this);
-        dao = appDatabase.getDAO();
+    private void removeFromDb(Item item) {
+        dao.delete(item);
     }
 
     //utils
@@ -180,6 +167,7 @@ public class CustomerReserveActivity extends AppCompatActivity {
     public boolean isEmpty(EditText etText) {
         return etText.getText().toString().trim().length() == 0;
     }
+
 
 
 
