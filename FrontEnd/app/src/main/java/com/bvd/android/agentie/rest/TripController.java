@@ -1,6 +1,7 @@
 package com.bvd.android.agentie.rest;
 
-import com.bvd.android.agentie.model.Trip;
+import com.bvd.android.agentie.model.Item;
+import com.bvd.android.agentie.model.dtos.TripBookDto;
 
 import java.util.List;
 
@@ -17,15 +18,25 @@ import retrofit2.http.Path;
 
 public interface TripController {
     @GET("all")
-    Call<List<Trip>> getAll();
+    Call<List<Item>> getAll();
 
     @POST("add")
-    Call<Trip> addItem(@Body Trip item);
+    Call<Item> addItem(@Body Item item);
 
     @POST("update")
-    Call<Trip> updateItem(@Body Trip item);
+    Call<Item> updateItem(@Body Item item);
 
     @DELETE("del/{id}")
     Call<Void> deleteItem(@Path("id") Integer id);
+
+    @GET("trips")
+    Call<List<Item>> getAllCustomer();
+
+    @POST("book")
+    Call<Item> acquireItem(@Body TripBookDto dto);
+
+    @DELETE("cancel")
+    Call<Void> returnItem(@Body Integer id);
+
 
 }

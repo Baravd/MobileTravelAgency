@@ -10,7 +10,7 @@ import android.widget.Toast;
 
 import com.bvd.android.agentie.MyApp;
 import com.bvd.android.agentie.R;
-import com.bvd.android.agentie.model.Trip;
+import com.bvd.android.agentie.model.Item;
 import com.bvd.android.agentie.rest.TripController;
 
 import javax.inject.Inject;
@@ -28,7 +28,7 @@ public class TripDetailsActivity extends AppCompatActivity {
     @Inject
     public TripController controller;
 
-    private Trip trip;
+    private Item item;
 
     @BindView(R.id.detailsNameText)
     public EditText nameText;
@@ -56,12 +56,12 @@ public class TripDetailsActivity extends AppCompatActivity {
         ((MyApp) getApplication()).getInjector().inject(this);
         progressBar.setVisibility(View.INVISIBLE);
 
-        trip = (Trip) getIntent().getExtras().getSerializable("item");
-        if (trip == null) {
+        item = (Item) getIntent().getExtras().getSerializable("item");
+        if (item == null) {
             Timber.v("Didn't receive the object from previous view");
             finish();
         } else {
-            Timber.v("Received item=" + trip);
+            Timber.v("Received item=" + item);
             setFields();
 
         }
@@ -69,16 +69,16 @@ public class TripDetailsActivity extends AppCompatActivity {
     }
 
     private void setFields() {
-        nameText.setText(trip.getName());
-        statusText.setText(trip.getStatus());
-        typeText.setText(trip.getType());
-        roomsText.setText(String.valueOf(trip.getRooms()));
+        nameText.setText(item.getName());
+        statusText.setText(item.getStatus());
+        typeText.setText(item.getType());
+        roomsText.setText(String.valueOf(item.getRooms()));
     }
 
     @OnClick(R.id.detailsDeleteBtn)
     void removeItem() {
         makeEverythingInvisibleAndShowProgress();
-        Call<Void> deleteItemCall = controller.deleteItem(trip.getId());
+        Call<Void> deleteItemCall = controller.deleteItem(item.getId());
 
 
         deleteItemCall.enqueue(new Callback<Void>() {
@@ -117,13 +117,13 @@ public class TripDetailsActivity extends AppCompatActivity {
             Toast.makeText(this, "Check your input", Toast.LENGTH_SHORT).show();
             return;
         }
-        Trip trip = update();
-        Call<Trip> updateItemCall = controller.updateItem(trip);
+        Item item = update();
+        Call<Item> updateItemCall = controller.updateItem(item);
 
 
-        updateItemCall.enqueue(new Callback<Trip>() {
+        updateItemCall.enqueue(new Callback<Item>() {
             @Override
-            public void onResponse(Call<Trip> call, Response<Trip> response) {
+            public void onResponse(Call<Item> call, Response<Item> response) {
                 int code = response.code();
                 Timber.v("Response code=%s and body=" + response.body(), code);
                 if (code == 200) {
@@ -138,7 +138,7 @@ public class TripDetailsActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<Trip> call, Throwable t) {
+            public void onFailure(Call<Item> call, Throwable t) {
                 Toast.makeText(TripDetailsActivity.this, "!!!Failed!!!", Toast.LENGTH_SHORT).show();
                 makeEverythingVisibleAndHideProgress();
 
@@ -149,12 +149,12 @@ public class TripDetailsActivity extends AppCompatActivity {
 
     }
 
-    private Trip update() {
-        trip.setName(nameText.getText().toString());
-        trip.setRooms(Integer.valueOf(roomsText.getText().toString()));
-        trip.setStatus(statusText.getText().toString());
-        trip.setType(typeText.getText().toString());
-        return trip;
+    private Item update() {
+        item.setName(nameText.getText().toString());
+        item.setRooms(Integer.valueOf(roomsText.getText().toString()));
+        item.setStatus(statusText.getText().toString());
+        item.setType(typeText.getText().toString());
+        return item;
     }
 
     private boolean fieldsValid() {

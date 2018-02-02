@@ -23,7 +23,10 @@
         <activity android:name=".client.ClientActivity" />
         <activity android:name=".employee.EmployeeActivity" />
         <activity android:name=".employee.TripDetailsActivity" />
-        <activity android:name=".employee.AddTripActivity"></activity>
+        <activity android:name=".employee.AddTripActivity" />
+        <activity android:name=".client.CustomerMyItemsActivity" />
+        <activity android:name=".client.CustomerAllItemsActivity" />
+        <activity android:name=".client.CustomerReserveActivity"></activity>
     </application>
 
 </manifest>

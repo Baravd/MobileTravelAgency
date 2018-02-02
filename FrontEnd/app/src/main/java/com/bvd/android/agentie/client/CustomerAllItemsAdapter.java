@@ -1,4 +1,4 @@
-package com.bvd.android.agentie.employee;
+package com.bvd.android.agentie.client;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -15,13 +15,13 @@ import com.bvd.android.agentie.model.Item;
 import java.util.List;
 
 /**
- * Created by bara on 2/1/2018.
+ * Created by bara on 2/2/2018.
  */
 
-public class TripAdapter extends ArrayAdapter<Item> {
+public class CustomerAllItemsAdapter extends ArrayAdapter<Item> {
     private Context context;
 
-    public TripAdapter(@NonNull Context context, int resource, @NonNull List<Item> objects) {
+    public CustomerAllItemsAdapter(@NonNull Context context, int resource,  @NonNull List<Item> objects) {
         super(context, resource, objects);
         this.context = context;
     }
@@ -38,7 +38,7 @@ public class TripAdapter extends ArrayAdapter<Item> {
         Item item = getItem(position);
 
         textView.setText(item.getName());
-        textView2.setText(item.toString1());
+        textView2.setText(item.toString2());
 
 
         return rowView;

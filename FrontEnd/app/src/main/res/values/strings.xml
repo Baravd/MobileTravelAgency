@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Agentie</string>
+    <string name="title_activity_customer_all_items">CustomerAllItemsActivity</string>
 </resources>

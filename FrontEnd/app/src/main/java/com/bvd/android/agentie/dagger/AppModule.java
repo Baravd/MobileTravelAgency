@@ -3,7 +3,7 @@ package com.bvd.android.agentie.dagger;
 import android.content.Context;
 
 import com.bvd.android.agentie.MyApp;
-import com.bvd.android.agentie.model.Trip;
+import com.bvd.android.agentie.dal.AppDatabase;
 import com.bvd.android.agentie.rest.TripController;
 import com.bvd.android.utils.NetworkUtils;
 
@@ -73,4 +73,7 @@ public class AppModule {
     public NetworkUtils provideNetworkUtils() {
         return new NetworkUtils();
     }
+
+
+
 }

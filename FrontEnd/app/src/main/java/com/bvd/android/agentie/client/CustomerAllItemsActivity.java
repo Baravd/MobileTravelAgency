@@ -1,4 +1,4 @@
-package com.bvd.android.agentie.employee;
+package com.bvd.android.agentie.client;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -7,7 +7,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -16,7 +15,6 @@ import com.bvd.android.agentie.MyApp;
 import com.bvd.android.agentie.R;
 import com.bvd.android.agentie.model.Item;
 import com.bvd.android.agentie.rest.TripController;
-import com.bvd.android.utils.NetworkUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,44 +23,35 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import butterknife.OnItemClick;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import timber.log.Timber;
 
-public class EmployeeActivity extends AppCompatActivity {
+public class CustomerAllItemsActivity extends AppCompatActivity {
 
-    @BindView(R.id.employeeTripList)
-    public ListView tripsListView;
-    @BindView(R.id.employeeProgressBar)
+    @BindView(R.id.customerAllItemsList)
+    public ListView allItemsList;
+
+    @BindView(R.id.customerProgressBar)
     public ProgressBar progressBar;
 
-    @BindView(R.id.employeeAddBtn)
-    public Button addBtn;
-
-    private List<Item> items;
-    private TripAdapter tripAdapter;
 
     @Inject
     public TripController controller;
-    @Inject
-    public NetworkUtils networkUtils;
 
-    private Integer retryCount;
-
+    private List<Item> items;
+    private CustomerAllItemsAdapter adapter;
+    private int retryCount = 3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_employee);
+        setContentView(R.layout.activity_customer_all_items);
         ButterKnife.bind(this);
         ((MyApp) getApplication()).getInjector().inject(this);
         Timber.v("on create");
-        retryCount = 3;
-
-
         items = new ArrayList<>();
 
 
@@ -71,9 +60,15 @@ public class EmployeeActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        refreshAdapter();
+    }
+
+
     private void refreshAdapter() {
         progressBar.setVisibility(View.VISIBLE);
-        addBtn.setVisibility(View.INVISIBLE);
 
 
         Call<List<Item>> all = controller.getAll();
@@ -84,23 +79,22 @@ public class EmployeeActivity extends AppCompatActivity {
                 Timber.v("Response code=%s", code);
                 if (code == 200) {
                     populateAdapter(response);
-                    Toast.makeText(EmployeeActivity.this, "Successful Refresh", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CustomerAllItemsActivity.this, "Successful Refresh", Toast.LENGTH_SHORT).show();
 
                 } else {
-                    Toast.makeText(EmployeeActivity.this, "Failed whit:" + code, Toast.LENGTH_SHORT).show();
-                    addBtn.setEnabled(false);
+                    Toast.makeText(CustomerAllItemsActivity.this, "Failed whit:" + code, Toast.LENGTH_SHORT).show();
                 }
                 progressBar.setVisibility(View.GONE);
-                addBtn.setVisibility(View.VISIBLE);
             }
 
             @Override
             public void onFailure(Call<List<Item>> call, Throwable t) {
-                Toast.makeText(EmployeeActivity.this, "!!!Failed!!!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(CustomerAllItemsActivity.this, "!!!Failed!!!", Toast.LENGTH_SHORT).show();
                 progressBar.setVisibility(View.GONE);
                 retryDialog();
             }
         });
+
 
     }
 
@@ -121,7 +115,7 @@ public class EmployeeActivity extends AppCompatActivity {
                     refreshAdapter();
 
                 } else {
-                    Toast.makeText(EmployeeActivity.this, "Check your connection", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CustomerAllItemsActivity.this, "Check your connection", Toast.LENGTH_SHORT).show();
                     finish();
                 }
 
@@ -142,33 +136,20 @@ public class EmployeeActivity extends AppCompatActivity {
         AlertDialog alert = builder.create();
         alert.show();
 
-
     }
 
     private void populateAdapter(Response<List<Item>> response) {
         items.clear();
         items.addAll(response.body());
-        tripAdapter = new TripAdapter(this, R.layout.list_item_layout_1, items);
-        tripsListView.setAdapter(tripAdapter);
+        adapter = new CustomerAllItemsAdapter(this, R.layout.list_item_layout_1, items);
+        allItemsList.setAdapter(adapter);
     }
 
-    @OnClick(R.id.employeeAddBtn)
-    public void redirectToAddTrip() {
-        Intent intent = new Intent(this, AddTripActivity.class);
-        startActivity(intent);
-    }
-
-    @OnItemClick(R.id.employeeTripList)
-    public void redirectToDetails(AdapterView<?> adapterView, View view, int i) {
-        Item item = tripAdapter.getItem(i);
-        Intent intent = new Intent(view.getContext(), TripDetailsActivity.class);
+    @OnItemClick(R.id.customerAllItemsList)
+    public void redirectToBookView(AdapterView<?> adapterView, View view, int i) {
+        Item item = adapter.getItem(i);
+        Intent intent = new Intent(view.getContext(), CustomerReserveActivity.class);
         intent.putExtra("item", item);
         startActivity(intent);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        refreshAdapter();
     }
 }
